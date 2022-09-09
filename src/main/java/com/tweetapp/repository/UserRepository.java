@@ -10,18 +10,22 @@ import com.tweetapp.model.User;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-	@Query(value = "{}", fields = "{loginId : 1}")
-	public List<String> findName();
+    @Query(value = "{}", fields = "{loginId : 1}")
+    public List<String> findName();
 
-	public List<User> findByLoginId(String loginId);
+    @Query(value = "{'loginid' : $0}", delete = true)
+    public void deleteByLoginId(String id);
 
-	public List<User> findByEmail(String email);
-	
-	public boolean existsByLoginId(String loginId);
-	
-	public boolean existsByEmail(String email);
-	
-	
-	public List<User> findByLoginIdLike(String loginIdPattern);
+    public List<User> findByLoginId(String loginId);
+
+
+    public List<User> findByEmail(String email);
+
+    public boolean existsByLoginId(String loginId);
+
+    public boolean existsByEmail(String email);
+
+
+    public List<User> findByLoginIdLike(String loginIdPattern);
 
 }

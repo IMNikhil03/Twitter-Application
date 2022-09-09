@@ -16,33 +16,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TweetExceptionHandler {
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<?> handleRequestBody(MethodArgumentNotValidException ex) {
-		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleRequestBody(MethodArgumentNotValidException ex) {
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
-		String errorMsg = fieldErrors.stream()
-				.map(fieldError -> fieldError.getField() + " - " + fieldError.getDefaultMessage()).sorted()
-				.collect(Collectors.joining(", "));
+        String errorMsg = fieldErrors.stream()
+                .map(fieldError -> fieldError.getField() + " - " + fieldError.getDefaultMessage()).sorted()
+                .collect(Collectors.joining(", "));
 
-		log.error(errorMsg);
+        log.error(errorMsg);
 
-		return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
 
-	}
+    }
 
-	@ExceptionHandler(InvalidOperationException.class)
-	public ResponseEntity<?> handleRequestBody(InvalidOperationException ex) {
-		String errorMsg = ex.getMessage();
-		log.error(errorMsg);
-		return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
-	}
-	
-	
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> handleRequestBody(Exception ex) {
-		String errorMsg = ex.getMessage();
-		log.error(errorMsg);
-		return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(InvalidOperationException.class)
+    public ResponseEntity<?> handleRequestBody(InvalidOperationException ex) {
+        String errorMsg = ex.getMessage();
+        log.error(errorMsg);
+        return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleRequestBody(Exception ex) {
+        String errorMsg = ex.getMessage();
+        log.error(errorMsg);
+        return new ResponseEntity<>(errorMsg, HttpStatus.BAD_REQUEST);
+    }
 
 }

@@ -13,13 +13,13 @@ import lombok.*;
 @Builder
 @ToString
 public class LoginRequest {
-	@NotNull
-	@NotBlank
-	@Pattern(regexp = "^[A-Za-z0-9_]+$", message = "invalid loginId, loginId should match ^[A-Za-z0-9_]+$")
-	private String loginId;
-	@NotNull
-	@NotBlank
-	@Size(min = 6, message = "password should be atleast 6 characters long")
-	@Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20}$", message = "password should atleast have: - one digit - one lower case alphabet - one upper case alphabet - any one special character - and no blank spaces")
-	private String password;
+    @NotNull
+    @NotBlank
+    @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "invalid loginId, loginId should match ^[A-Za-z0-9_]+$")
+    private String loginId;
+    @NotNull
+    @NotBlank
+    @Size(min = 6, message = "password should be atleast 6 characters long")
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,20}$", message = "password should atleast have: - one digit - one lower case alphabet - one upper case alphabet - any one special character - and no blank spaces")
+    private String password;
 }

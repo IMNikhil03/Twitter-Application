@@ -14,8 +14,8 @@ public class TweetConsumer {
     TweetService tweetService;
 
     @RabbitListener(queues = TweetConfig.QUEUE)
-    public void consumeMessagFromQueue(TweetRequest tweetRequest){
-        System.out.println("Message received from Queue : "+tweetRequest);
+    public void consumeMessagFromQueue(TweetRequest tweetRequest) {
+        System.out.println("Message received from Queue : " + tweetRequest);
         tweetService.saveTweet(tweetRequest);
     }
 }

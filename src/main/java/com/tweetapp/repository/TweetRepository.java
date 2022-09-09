@@ -1,18 +1,21 @@
 package com.tweetapp.repository;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.data.mongodb.repository.Aggregation;
+import com.tweetapp.domain.TweetRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.tweetapp.model.Tweet;
-
 @Repository
-public interface TweetRepository extends MongoRepository<Tweet, String> {
-	@Aggregation(pipeline = { "{'$sort': {'lastModifiedDate': -1}}" })
-	public List<Tweet> findAll();
+public interface TweetRepository extends MongoRepository<TweetRequest, String> {
+    public List<TweetRequest> findAll();
 
-	@Aggregation(pipeline = { "{'$match': { 'loginId' : ?0 }}", "{'$sort': {'lastModifiedDate': -1}}" })
-	public List<Tweet> findByLoginId(String loginId);
+    @Query("{tweetId :?0}")
+    public Optional<TweetRequest> findById(String tweetId);
+
+    @Query(value = "{tweetId : $0}", delete = true)
+    public void deleteByTweetId(String id);
+
 }

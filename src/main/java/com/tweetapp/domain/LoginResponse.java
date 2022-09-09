@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class LoginResponse {
-	private String jwtToken;
+    private String loginId;
+    private boolean valid;
+    private String token;
 }

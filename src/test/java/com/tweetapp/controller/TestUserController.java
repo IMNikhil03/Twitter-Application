@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tweetapp.domain.LoginRequest;
 import com.tweetapp.domain.LoginResponse;
 import com.tweetapp.domain.UserRegisterRequest;
-import com.tweetapp.model.Tweet;
 import com.tweetapp.model.User;
 import com.tweetapp.repository.UserRepository;
 import com.tweetapp.service.UserService;
@@ -87,7 +86,7 @@ public class TestUserController {
 
 		LoginResponse loginResponse = objectMapper.readValue(contentAsString, LoginResponse.class);
 
-		token = loginResponse.getJwtToken();
+		token = loginResponse.getToken();
 
 	}
 
@@ -111,7 +110,7 @@ public class TestUserController {
 
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 
-		List<Tweet> list = objectMapper.readValue(contentAsString, new TypeReference<List<Tweet>>() {
+		List<User> list = objectMapper.readValue(contentAsString, new TypeReference<List<User>>() {
 		});
 
 		assertEquals(expectedCount, list.size());
@@ -132,7 +131,7 @@ public class TestUserController {
 
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 
-		List<Tweet> list = objectMapper.readValue(contentAsString, new TypeReference<List<Tweet>>() {
+		List<User> list = objectMapper.readValue(contentAsString, new TypeReference<List<User>>() {
 		});
 
 		assertEquals(expectedCount, list.size());
@@ -152,22 +151,13 @@ public class TestUserController {
 
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 
-		List<Tweet> list = objectMapper.readValue(contentAsString, new TypeReference<List<Tweet>>() {
+		List<User> list = objectMapper.readValue(contentAsString, new TypeReference<List<User>>() {
 		});
 
 		assertEquals(expectedCount, list.size());
 
 	}
 
-	@Test
-	void testSearchByLoginId_WithNoToken() throws Exception {
-
-		when(userService.getAllUsersByLoginId(anyString())).thenReturn(Arrays
-				.asList(User.builder().firstName("test").lastName("e").email("e@test.io").loginId("tedt_1").build()));
-
-		mockMvc.perform(get("/api/v1.0/tweets/user/search/test")).andExpectAll(status().is4xxClientError());
-
-	}
 
 	@Test
 	void testGetAllTweets_EmptyList() throws Exception {
@@ -181,7 +171,7 @@ public class TestUserController {
 
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 
-		List<Tweet> list = objectMapper.readValue(contentAsString, new TypeReference<List<Tweet>>() {
+		List<User> list = objectMapper.readValue(contentAsString, new TypeReference<List<User>>() {
 		});
 
 		assertEquals(expectedCount, list.size());

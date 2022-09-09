@@ -3,6 +3,8 @@ package com.tweetapp.controller;
 import javax.validation.Valid;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,59 +30,48 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1.0/tweets")
 @CrossOrigin(origins = "http://localhost:3000")
+@Slf4j
 public class AuthenticationController {
 
-	@Autowired
-	AuthenticationManager authenticationManager;
-	
-	@Autowired
-	AuthenticationService authenticationService;
-	
-	@Autowired
-	JwtUtils jwtUtils;
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
-	@Value("${tweet.app.jwtExpirationMs}")
-	private long jwtExpirationMs;
-	
-	@PostMapping("/register")
-	public User registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest ) throws InvalidOperationException {
-		
-		User registeredUser = authenticationService.registerNewUser(userRegisterRequest);
-		
-		return registeredUser;
-	}
-	
-	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws InvalidOperationException {
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(), loginRequest.getPassword()));
+    @Autowired
+    AuthenticationService authenticationService;
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+    @Autowired
+    JwtUtils jwtUtils;
 
-		String jwt = jwtUtils.generateJwtToken(authentication);
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-		User user = authenticationService.getUserDetails(loginRequest.getLoginId());
-		LoginResponse loginResponse = LoginResponse.builder().jwtToken(jwt).build();
+    @Value("${tweet.app.jwtExpirationMs}")
+    private long jwtExpirationMs;
 
-		return ResponseEntity.ok(loginResponse);
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) throws InvalidOperationException {
 
-	}
-	
-	@PostMapping("/{loginId}/forgot")
-	public ResponseEntity<?> forgotPassword(@RequestHeader("Authorization") String token, @PathVariable String loginId, @Valid @RequestBody  ForgotPasswordRequest forgotPasswordRequest) throws InvalidOperationException{
+        log.info("In User Service - Registering User");
+        log.debug("registering user {}", userRegisterRequest);
+        return authenticationService.registerNewUser(userRegisterRequest);
+    }
 
-		System.out.println(jwtUtils.validateJwtToken(token) );
-	if(jwtUtils.validateJwtToken(token) && jwtUtils.getUserNameFromJwtToken(token).equals(loginId)) {
-		System.out.println("Login ID :  " + loginId);
-		System.out.println("Validated ");
-		forgotPasswordRequest.setLoginId(loginId);
-		User user = authenticationService.changePassword(forgotPasswordRequest);
-		return ResponseEntity.ok(user);
-	}
-	return new ResponseEntity<>("Invalid loginId", HttpStatus.valueOf(500));
-	}
-	
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) throws InvalidOperationException {
+        log.info("inside user service to login");
+        log.debug("Login user name: {}", loginRequest.getLoginId());
+        return authenticationService.getUserDetails(loginRequest);
+
+    }
+
+    @PutMapping("/{loginId}/forgot")
+    public ResponseEntity<?> forgotPassword(@PathVariable String loginId, @Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) throws InvalidOperationException {
+        log.info("inside user service to change forgot password {}", loginId);
+        return authenticationService.changePassword(forgotPasswordRequest);
+    }
+
+    @GetMapping(value = "/validate")
+    public ResponseEntity<LoginResponse> getValidity(@RequestHeader("Authorization") final String token) throws InvalidOperationException {
+        log.info("inside user service to validate the token");
+        return authenticationService.validate(token);
+    }
+
 }

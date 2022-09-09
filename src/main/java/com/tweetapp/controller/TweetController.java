@@ -1,125 +1,120 @@
 package com.tweetapp.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import com.tweetapp.producer.TweetProducer;
+import com.tweetapp.service.AuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.tweetapp.domain.TweetReplyRequest;
 import com.tweetapp.domain.TweetRequest;
 import com.tweetapp.exception.InvalidOperationException;
-import com.tweetapp.model.Tweet;
 import com.tweetapp.service.TweetService;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1.0/tweets")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*",maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", maxAge = 3600)
 public class TweetController {
 
-	@Autowired
-	TweetProducer tweetProducer;
+    @Autowired
+    TweetProducer tweetProducer;
 
-	@Autowired
-	TweetProducer tweetPublisher;
+    @Autowired
+    TweetProducer tweetPublisher;
 
 
-	@Autowired
-	TweetService tweetService;
+    @Autowired
+    TweetService tweetService;
 
-	@PostMapping("/{loginId}/add")
-	public ResponseEntity<TweetRequest> postNewTweet(Authentication authentication,@PathVariable String loginId,
-			@RequestBody @Valid TweetRequest tweetRequest) throws Exception {
-		if(!authentication.getName().equals(loginId)) {
-			throw new InvalidOperationException("you cannot perform this action!!");
-		}
+    @Autowired
+    AuthenticationService authService;
 
-		tweetRequest.setLoginId(loginId);
+    @PostMapping("/{loginId}/add")
+    public ResponseEntity<?> postNewTweet(@RequestHeader("Authorization") final String token, @PathVariable String loginId,
+                                          @RequestBody @Valid TweetRequest tweetRequest) throws Exception {
+        log.info("inside tweet service controller to add a tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            tweetRequest.setLoginId(loginId);
+            return tweetService.saveTweet(tweetRequest);
 
-		TweetRequest tweet = tweetPublisher.sendNewTweet(tweetRequest);
+        }
+        throw new InvalidOperationException("you cannot perform this action!!");
 
-		return new ResponseEntity<>(tweet, HttpStatus.CREATED);
-	}
-	
-	@PostMapping("/{loginId}/post")
-	public ResponseEntity<Tweet> postTweet(Authentication authentication,@PathVariable String loginId,
-			@RequestBody @Valid TweetRequest tweetRequest) throws Exception {
-		System.out.println("\n\\n\nAuthentcayion : "+authentication);
-		if(!authentication.getName().equals(loginId)) {
-			throw new InvalidOperationException("you cannot perform this action!!");
-		}
-		
-		tweetRequest.setLoginId(loginId);
 
-		Tweet tweet = tweetService.saveTweet(tweetRequest);
+    }
 
-		return new ResponseEntity<>(tweet, HttpStatus.CREATED);
-	}
+    @DeleteMapping("/{loginId}/delete/{tweetId}")
+    public ResponseEntity<?> deleteTweet(@RequestHeader("Authorization") String token, @PathVariable String loginId, @PathVariable String tweetId) throws InvalidOperationException {
+        log.info("deleted");
+        log.info("inside tweet service controller to delete tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.deleteTweet(tweetId, loginId);
+        }
+        throw new InvalidOperationException("you cannot perform this action!!");
 
-	@DeleteMapping("/{loginId}/delete/{tweetId}")
-	public ResponseEntity<?> deleteTweet(Authentication authentication,@PathVariable String loginId, @PathVariable String tweetId) throws InvalidOperationException {
-		
-		if(!authentication.getName().equals(loginId)) {
-			throw new InvalidOperationException("you cannot perform this action!!");
-		}
+    }
 
-		tweetService.deleteTweet(tweetId,loginId);
+    @PutMapping("/{loginId}/update/{tweetId}")
+    public ResponseEntity<?> updateTweet(@RequestHeader("Authorization") String token, @PathVariable String loginId, @PathVariable String tweetId,
+                                         @RequestBody @Valid TweetRequest tweetRequest) throws InvalidOperationException {
+        log.info("inside tweet service controller to update tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            tweetRequest.setLoginId(loginId);
 
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+            return tweetService.updateTweet(tweetRequest, tweetId);
 
-	@PutMapping("/{loginId}/update/{tweetId}")
-	public ResponseEntity<?> updateTweet(Authentication authentication, @PathVariable String loginId, @PathVariable String tweetId,
-			@RequestBody @Valid TweetRequest tweetRequest) throws InvalidOperationException {
+        }
+        throw new InvalidOperationException("you cannot perform this action!!");
+    }
 
-		if(!authentication.getName().equals(loginId)) {
-			throw new InvalidOperationException("you cannot perform this action!!");
-		}
-		
-		tweetRequest.setLoginId(loginId);
+    @PutMapping("/{loginId}/like/{tweetId}")
+    public ResponseEntity<?> likeTweet(@RequestHeader("Authorization") String token, @PathVariable String loginId, @PathVariable String tweetId) throws InvalidOperationException {
+        log.info("inside tweet service controller to like tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.toggleTweetLike(tweetId, loginId);
+        }
+        throw new InvalidOperationException("Token Expired or Invalid , Login again ...");
+    }
 
-		Tweet updatedTweet = tweetService.updateTweet(tweetRequest, tweetId);
+    @PutMapping("/{loginId}/unlike/{tweetId}")
+    public ResponseEntity<?> unLikeTweet(@RequestHeader("Authorization") String token, @PathVariable String loginId, @PathVariable String tweetId) throws InvalidOperationException {
+        log.info("inside tweet service controller to like tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.toggleTweetLike(tweetId, loginId);
+        }
+        throw new InvalidOperationException("Token Expired or Invalid , Login again ...");
+    }
 
-		return new ResponseEntity<>(updatedTweet, HttpStatus.OK);
-	}
+    @PostMapping("/{loginId}/reply/{tweetId}")
+    public ResponseEntity<?> replyTweet(@RequestHeader("Authorization") String token, @PathVariable String loginId, @PathVariable String tweetId
+            , @RequestBody String reply) throws InvalidOperationException {
+        log.info("inside tweet service controller to reply tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.replyTweet(loginId, tweetId, reply);
+        }
+        throw new InvalidOperationException("Token Expired or Invalid , Login again ...");
+    }
 
-	@PutMapping("/{loginId}/like/{tweetId}")
-	public ResponseEntity<?> likeTweet(@PathVariable String loginId, @PathVariable String tweetId) {
-		tweetService.toggleTweetLike(tweetId, loginId);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllTweets(@RequestHeader("Authorization") String token) throws InvalidOperationException {
+        log.info("inside tweet service controller to all tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.getAllTweets();
+        }
+        throw new InvalidOperationException("Token Expired or Invalid , Login again ...");
 
-	@PostMapping("/{loginId}/reply/{tweetId}")
-	public ResponseEntity<?> replyTweet(@PathVariable String loginId, @PathVariable String tweetId,
-			@RequestBody @Valid TweetReplyRequest tweetReplyRequest) {
-		tweetReplyRequest.setLoginId(loginId);
-		tweetReplyRequest.setTweetId(tweetId);
-		Tweet tweet = tweetService.replyTweet(tweetReplyRequest);
-		return new ResponseEntity<>(tweet, HttpStatus.OK);
-	}
+    }
 
-	@GetMapping("/all")
-	public ResponseEntity<List<Tweet>> getAllTweets() {
-		List<Tweet> tweets = tweetService.getAllTweets();
-		return new ResponseEntity<>(tweets, HttpStatus.OK);
-	}
-	@GetMapping("/{loginId}")
-	public ResponseEntity<List<Tweet>> getAllTweetsOfUser(@PathVariable String loginId) throws InvalidOperationException {
-		List<Tweet> tweets = tweetService.getAllTweetsOfUser(loginId);
-		return new ResponseEntity<>(tweets, HttpStatus.OK);
-	}
-	
+    @GetMapping("/{loginId}")
+    public ResponseEntity<?> getAllTweetsOfUser(@RequestHeader("Authorization") String token, @PathVariable String loginId) throws InvalidOperationException {
+        log.info("inside tweet service controller to all tweets");
+        if (authService.validate(token).getBody().isValid()) {
+            return tweetService.getAllTweetsOfUser(loginId);
+        }
+        throw new InvalidOperationException("Token Expired or Invalid , Login again ...");
+    }
+
 }

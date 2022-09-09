@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1d0a46a7-b02a-4ed8-ac8e-e36c7c220934",
+		"_postman_id": "d4b8f4ee-88f5-44e9-8c60-b5bdd375e339",
 		"name": "tweet-app",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstName\":\"yogesh\",\n    \"lastName\":\"R\",\n    \"email\":\"t24sdf4@gmail.com\",\n    \"loginId\":\"Im334*5\",\n    \"password\":\"Pass@word3\",\n    \"phoneNumber\":\"\"\n}",
+					"raw": "{\n    \"firstName\":\"Nikhil\",\n    \"lastName\":\"Marripati\",\n    \"email\":\"nihhil@gmail.com\",\n    \"loginId\":\"839008\",\n    \"password\":\"Lihkin@03\",\n    \"phoneNumber\":\"\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -38,18 +38,15 @@
 		},
 		{
 			"name": "login",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"auth": {
 					"type": "noauth"
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"loginId\":\"Im45\",\n    \"password\":\"Pass@word2\"\n}",
+					"raw": "{\n    \"loginId\":\"839008\",\n    \"password\":\"Lihkin@03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -75,15 +72,12 @@
 		},
 		{
 			"name": "change password",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"password\":\"Pass@word2\"\n}",
+					"raw": "{\n    \"loginId\":\"839008\",\n    \"password\":\"Lihkin@03\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -91,7 +85,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/forgot",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/forgot",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -101,7 +95,7 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"forgot"
 					]
 				}
@@ -111,6 +105,16 @@
 		{
 			"name": "post tweet",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUd2VldCBBcHAiLCJzdWIiOiJMb2dpbiBUb2tlbiIsInVzZXJuYW1lIjoiTmF2ZWVuMjIiLCJpYXQiOjE2NjI2Njk2MjMsImV4cCI6MTY2MjY3NjgyM30.tu6RpExP8xBThx30Jd8ZmOzbTHupJyYxpsBPKvUZUSs",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -121,7 +125,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"message\":\"\",\n    \"tags\":\"#firsttweet#goodday\"\n}",
+					"raw": "{\n    \"message\":\"Hi There,I'm enjoying the  day\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -129,7 +133,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/add",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/add",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -139,7 +143,7 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"add"
 					]
 				}
@@ -160,7 +164,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"message\":\"what up boii!\"\n}",
+					"raw": "{\n    \"message\":\"Updated Tweet\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -168,7 +172,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/update/d03b01fc-6d18-4e86-ae0a-fb04e5872560",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/update/9d3ac537-651a-4d40-bf6c-78b54097c1cf",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -178,9 +182,9 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"update",
-						"d03b01fc-6d18-4e86-ae0a-fb04e5872560"
+						"9d3ac537-651a-4d40-bf6c-78b54097c1cf"
 					]
 				}
 			},
@@ -201,7 +205,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/reply/d03b01fc-6d18-4e86-ae0a-fb04e5872560",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/reply/9d3ac537-651a-4d40-bf6c-78b54097c1cf",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -211,9 +215,9 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"reply",
-						"d03b01fc-6d18-4e86-ae0a-fb04e5872560"
+						"9d3ac537-651a-4d40-bf6c-78b54097c1cf"
 					]
 				}
 			},
@@ -225,7 +229,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/like/d03b01fc-6d18-4e86-ae0a-fb04e5872560",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/like/9d3ac537-651a-4d40-bf6c-78b54097c1cf",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -235,9 +239,9 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"like",
-						"d03b01fc-6d18-4e86-ae0a-fb04e5872560"
+						"9d3ac537-651a-4d40-bf6c-78b54097c1cf"
 					]
 				}
 			},
@@ -249,7 +253,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45/delete/d03b01fc-6d18-4e86-ae0a-fb04e5872560",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008/delete/9d3ac537-651a-4d40-bf6c-78b54097c1cf",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -259,9 +263,9 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45",
+						"839008",
 						"delete",
-						"d03b01fc-6d18-4e86-ae0a-fb04e5872560"
+						"9d3ac537-651a-4d40-bf6c-78b54097c1cf"
 					]
 				}
 			},
@@ -318,7 +322,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/user/search/Im",
+					"raw": "http://localhost:8080/api/v1.0/tweets/user/search/Naveen22",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -330,7 +334,7 @@
 						"tweets",
 						"user",
 						"search",
-						"Im"
+						"Naveen22"
 					]
 				}
 			},
@@ -340,9 +344,16 @@
 			"name": "get all tweets of user",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"url": {
-					"raw": "http://localhost:8080/api/v1.0/tweets/Im45",
+					"raw": "http://localhost:8080/api/v1.0/tweets/839008",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -352,7 +363,7 @@
 						"api",
 						"v1.0",
 						"tweets",
-						"Im45"
+						"839008"
 					]
 				}
 			},
@@ -364,7 +375,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJZb2dlc2giLCJzdWIiOiJKd3QgVG9rZW4iLCJ1c2VybmFtZSI6IkltNDUiLCJpYXQiOjE2NTE3MzQ3NTksImV4cCI6MTY1MTczNTA1OX0.BosIWtpoAtxEXZ7KuLEM17JMCpITsdJuxv9rz4mHnpU",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUd2VldCBBcHAiLCJzdWIiOiJMb2dpbiBUb2tlbiIsInVzZXJuYW1lIjoiTmF2ZWVuMjIiLCJpYXQiOjE2NjI2Njk2MjMsImV4cCI6MTY2MjY3NjgyM30.tu6RpExP8xBThx30Jd8ZmOzbTHupJyYxpsBPKvUZUSs",
 				"type": "string"
 			}
 		]

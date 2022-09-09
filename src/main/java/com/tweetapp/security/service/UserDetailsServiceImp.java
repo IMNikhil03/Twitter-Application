@@ -17,17 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserDetailsServiceImp implements UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		List<User> user = userRepository.findByLoginId(username);
-		log.info(user.toString());
-		if (user.size() == 0) {
-			throw new UsernameNotFoundException("User details not found for the user: " + username);
-		}
-		return new UserDetailsImp(user.get(0));
-	}
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<User> user = userRepository.findByLoginId(username);
+        log.info(user.toString());
+        if (user.size() == 0) {
+            throw new UsernameNotFoundException("User details not found for the user: " + username);
+        }
+        return new UserDetailsImp(user.get(0));
+    }
 
 }

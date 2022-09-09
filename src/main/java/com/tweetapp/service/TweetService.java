@@ -1,19 +1,18 @@
 package com.tweetapp.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.tweetapp.model.ResponseMessage;
+import com.tweetapp.model.ResponseTweet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.tweetapp.domain.TweetReplyRequest;
 import com.tweetapp.domain.TweetRequest;
 import com.tweetapp.exception.InvalidOperationException;
-import com.tweetapp.model.Like;
-import com.tweetapp.model.Reply;
-import com.tweetapp.model.Tweet;
 import com.tweetapp.model.User;
 import com.tweetapp.repository.TweetRepository;
 import com.tweetapp.repository.UserRepository;
@@ -24,112 +23,149 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TweetService {
 
-	@Autowired
-	TweetRepository tweetRepository;
+    @Autowired
+    TweetRepository tweetRepository;
 
-	@Autowired
-	UserRepository userRepository;
-
-
+    @Autowired
+    UserRepository userRepository;
 
 
-	public void deleteTweet(String tweetId, String loginId) throws InvalidOperationException {
-		Optional<Tweet> optionalTweet = tweetRepository.findById(tweetId);
-		if (!optionalTweet.isPresent()) {
-			throw new InvalidOperationException("Invalid Tweet Id");
-		}
-		Tweet tweet = optionalTweet.get();
-		if (!tweet.getLoginId().equals(loginId)) {
-			throw new InvalidOperationException("you cannot perform this action");
-		}
-		log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
-		tweetRepository.delete(tweet);
-		log.info("successfull deleted the Tweet: {}", optionalTweet.get());
-	}
+    public ResponseEntity<Object> deleteTweet(String tweetId, String loginId) throws InvalidOperationException {
+        Optional<TweetRequest> optionalTweet = tweetRepository.findById(tweetId);
+        if (!optionalTweet.isPresent()) {
+            throw new InvalidOperationException("Invalid Tweet Id");
+        }
+        TweetRequest tweet = optionalTweet.get();
+        if (!tweet.getLoginId().equals(loginId)) {
+            throw new InvalidOperationException("you cannot perform this action");
+        }
+        tweet.setStatus(false);
+        log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
+        tweetRepository.deleteByTweetId(tweetId);
+        log.info("successfull deleted the Tweet: {}", optionalTweet.get());
+        return new ResponseEntity<Object>("Deleting Tweet Successfully", HttpStatus.OK);
+    }
 
-	public Tweet updateTweet(TweetRequest tweetRequest, String tweetId) throws InvalidOperationException {
-		Optional<Tweet> optionalTweet = tweetRepository.findById(tweetId);
-		if (!optionalTweet.isPresent()) {
-			throw new IllegalArgumentException("Invalid Tweet Id");
-		}
-		Tweet tweet = optionalTweet.get();
-		if (!tweet.getLoginId().equals(tweetRequest.getLoginId())) {
-			throw new InvalidOperationException("you cannot perform this action");
-		}
-		log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
-		tweet.setMessage(tweetRequest.getMessage());
-		tweet.setTags(Arrays.asList(tweetRequest.getTags().split("#")).stream().filter(tag -> !tag.isEmpty())
-				.collect(Collectors.toList()));
-		tweetRepository.save(tweet);
-		log.info("successfull updated the Tweet: {}", tweet);
-		return tweet;
-	}
+    public ResponseEntity<Object> updateTweet(TweetRequest tweetRequest, String tweetId) throws InvalidOperationException {
+        log.info("inside tweet service Implementation to update tweet data");
 
-	public void toggleTweetLike(String tweetId, String loginId) {
-		Optional<Tweet> optionalTweet = tweetRepository.findById(tweetId);
-		if (!optionalTweet.isPresent()) {
-			throw new IllegalArgumentException("Invalid Tweet Id");
-		}
-		log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
-		Tweet tweet = optionalTweet.get();
-		List<Like> likes = tweet.getLikes();
-		Like like = Like.builder().userLoginId(loginId).build();
-		if (likes.contains(like)) {
-			likes.remove(like);
-			log.info("{} unliked Tweet: {}", like, optionalTweet.get());
-		} else {
-			likes.add(like);
-			log.info("{} liked Tweet: {}", like, optionalTweet.get());
-		}
-		tweet.setLikes(likes);
-		tweetRepository.save(tweet);
-	}
+        Optional<TweetRequest> optionalTweet = tweetRepository.findById(tweetId);
+        if (!optionalTweet.isPresent()) {
+            throw new IllegalArgumentException("Invalid Tweet Id");
+        }
+        TweetRequest tweet = optionalTweet.get();
+        if (!tweet.getLoginId().equals(tweetRequest.getLoginId())) {
+            throw new InvalidOperationException("you cannot perform this action");
+        }
+        log.info("Validation is successfull for the Tweet: {}", tweet);
+        tweet.setMessage(tweetRequest.getMessage());
+        tweet.setTime(LocalDateTime.now());
+        tweetRepository.deleteByTweetId(tweetId);
+        tweetRepository.save(tweet);
+        log.info("successfull updated the Tweet: {}", tweet);
+        return new ResponseEntity<Object>("Updated Tweet Successfully", HttpStatus.OK);
+    }
 
-	public Tweet replyTweet(TweetReplyRequest replyRequest) {
-		Optional<Tweet> optionalTweet = tweetRepository.findById(replyRequest.getTweetId());
-		if (!optionalTweet.isPresent()) {
-			throw new IllegalArgumentException("Invalid Tweet Id");
-		}
-		log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
-		Tweet tweet = optionalTweet.get();
-		User user = userRepository.findByLoginId(replyRequest.getLoginId()).get(0);
-		Reply reply = Reply.buildReply(replyRequest,user);
-		List<Reply> replies = tweet.getReplies();
-		replies.add(reply);
-		tweet.setReplies(replies);
-		tweetRepository.save(tweet);
-		log.info("{} replied to Tweet: {}", replyRequest.getLoginId(), tweet);
-		return tweet;
-	}
+    public ResponseEntity<Object> toggleTweetLike(String tweetId, String loginId) throws InvalidOperationException {
+        log.info("inside tweet service Implementation to like tweet");
+        Optional<TweetRequest> optionalTweet = tweetRepository.findById(tweetId);
+        if (!optionalTweet.isPresent()) {
+            throw new InvalidOperationException("Invalid Tweet Id");
+        }
+        log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
+        TweetRequest tweet = optionalTweet.get();
+        if (tweet.getLikes() != null) {
+            tweet.getLikes().add(loginId);
+            tweet.setLikes(tweet.getLikes());
+        } else {
+            Set<String> set = new HashSet<String>();
+            set.add(loginId);
+            tweet.setLikes(set);
+        }
+        tweetRepository.deleteByTweetId(tweetId);
+        tweetRepository.save(tweet);
 
-	public List<Tweet> getAllTweets() {
-		List<Tweet> tweetlist = tweetRepository.findAll();
-		if (tweetlist.size() == 0) {
-			log.info("There are no tweets to retrieve");
-			return tweetlist;
-		}
-		log.info(tweetlist.size() + " tweets successfully retrieved");
-		return tweetlist;
-	}
-	
-	public List<Tweet> getAllTweetsOfUser(String loginId) throws InvalidOperationException {
-		boolean user = userRepository.existsByLoginId(loginId);
-		if(!user) {
-			throw new InvalidOperationException("User don't exits!!");
-		}
-		
-		List<Tweet> tweetlist = tweetRepository.findByLoginId(loginId);
-		if (tweetlist.size() == 0) {
-			log.info("There are no tweets to retrieve");
-			return tweetlist;
-		}
-		log.info(tweetlist.size() + " tweets successfully retrieved");
-		return tweetlist;
-	}
+        return new ResponseEntity<Object>("liked the Tweet Successfully", HttpStatus.OK);
+    }
 
-	public Tweet saveTweet(TweetRequest tweetRequest) {
-		User user = userRepository.findByLoginId(tweetRequest.getLoginId()).get(0);
-		Tweet tweet = Tweet.buildTweet(tweetRequest,user);
-		return tweetRepository.save(tweet);
-	}
+    public ResponseEntity<Object> unLikeTweet(String username, String id) throws InvalidOperationException {
+        log.info("inside tweet service Implementation to unlike tweet");
+        Optional<TweetRequest> tweet = tweetRepository.findById(id);
+        if (tweet.isEmpty()) {
+            throw new InvalidOperationException("Tweet not found exception");
+        }
+        if (tweet.get().getLikes() != null) {
+            tweet.get().getLikes().remove(username);
+            tweet.get().setLikes(tweet.get().getLikes());
+        }
+        tweetRepository.deleteByTweetId(id);
+        tweetRepository.save(tweet.get());
+        return new ResponseEntity<Object>("Un-liked the Tweet Successfully", HttpStatus.OK);
+    }
+
+    public ResponseEntity<Object> replyTweet(String loginId, String tweetId, String reply) {
+        Optional<TweetRequest> optionalTweet = tweetRepository.findById(tweetId);
+        if (!optionalTweet.isPresent()) {
+            throw new IllegalArgumentException("Invalid Tweet Id");
+        }
+        log.info("Validation is successfull for the Tweet: {}", optionalTweet.get());
+        TweetRequest tweet = optionalTweet.get();
+        User user = userRepository.findByLoginId(loginId).get(0);
+
+        reply = reply.replace("+", " ");
+        reply = reply.replace("=", "");
+        reply = user.getFirstName() + " " + user.getLastName() + "-" + reply;
+        if (tweet.getReplies() != null)
+            tweet.getReplies().add(reply);
+        else {
+            List<String> l = new ArrayList<String>();
+            l.add(reply);
+            tweet.setReplies(l);
+        }
+        tweetRepository.deleteByTweetId(tweetId);
+        tweetRepository.save(tweet);
+        return new ResponseEntity<Object>("Replied to Tweet Successfully", HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<?> getAllTweets() {
+        List<TweetRequest> tweets = tweetRepository.findAll();
+        System.out.println(!tweets.isEmpty() + " " + tweets.size());
+        if (!tweets.isEmpty() && tweets.size() > 0)
+            return new ResponseEntity<Object>(formatData(tweets), HttpStatus.OK);
+        return new ResponseEntity<Object>(new ResponseMessage("No Tweets Found"), HttpStatus.NO_CONTENT);
+    }
+
+    public List<ResponseTweet> formatData(List<TweetRequest> list) {
+        log.info("inside tweet service Implementation to format data :" + list);
+        List<ResponseTweet> result = new ArrayList<>();
+        for (TweetRequest tweet : list) {
+            List<User> users = userRepository.findByLoginId(tweet.getLoginId());
+            User user = users.get(0);
+            ResponseTweet tweet1 = new ResponseTweet(tweet.getTweetId(), tweet.getMessage(),
+                    tweet.getTime(), tweet.getLoginId(), tweet.getLikes(), tweet.getReplies(), user.getFirstName(),
+                    user.getLastName(), tweet.isStatus());
+            result.add(tweet1);
+            System.out.println(tweet1);
+        }
+        return result;
+    }
+
+    public ResponseEntity<Object> getAllTweetsOfUser(String loginId) throws InvalidOperationException {
+
+        log.info("inside tweet service Implementation to get tweets by username");
+        List<TweetRequest> tweets = tweetRepository.findAll().stream().filter(o -> o.getLoginId().equals(loginId)).collect(Collectors.toList());
+        if (!tweets.isEmpty() && tweets.size() > 0)
+            return new ResponseEntity<Object>(formatData(tweets), HttpStatus.OK);
+        return new ResponseEntity<Object>(new ResponseMessage("No Tweets Found"), HttpStatus.NO_CONTENT);
+    }
+
+    public ResponseEntity<?> saveTweet(TweetRequest tweetRequest) {
+        String tweetId = UUID.randomUUID().toString();
+        tweetRequest.setTweetId(tweetId);
+        tweetRequest.setStatus(true);
+        tweetRequest.setTime(LocalDateTime.now());
+        tweetRepository.save(tweetRequest);
+        return new ResponseEntity("Added Tweet Successfully", HttpStatus.CREATED);
+    }
 }

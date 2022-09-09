@@ -21,43 +21,43 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtUtils {
 
-	@Value("${tweet.app.jwtSecret}")
-	private String jwtSecret;
+    @Value("${tweet.app.jwtSecret}")
+    private String jwtSecret;
 
-	@Value("${tweet.app.jwtExpirationMs}")
-	private long jwtExpirationMs;
+    @Value("${tweet.app.jwtExpirationMs}")
+    private long jwtExpirationMs;
 
-	public String generateJwtToken(Authentication authentication) {
+    public String generateJwtToken(Authentication authentication) {
 
-		UserDetailsImp userPrincipal = (UserDetailsImp) authentication.getPrincipal();
+        UserDetailsImp userPrincipal = (UserDetailsImp) authentication.getPrincipal();
 
-		SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-		String jwt = Jwts.builder().setIssuer("Tweet App").setSubject("Login Token")
-				.claim("username", userPrincipal.getUsername()).setIssuedAt(new Date())
-				.setExpiration(new Date(new Date().getTime() + jwtExpirationMs)).signWith(key).compact();
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        String jwt = Jwts.builder().setIssuer("Tweet App").setSubject("Login Token")
+                .claim("username", userPrincipal.getUsername()).setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs)).signWith(key).compact();
 
-		return jwt;
+        return jwt;
 
-	}
+    }
 
-	public String getUserNameFromJwtToken(String token) {
+    public String getUserNameFromJwtToken(String token) {
 
-		SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-		String username = String.valueOf(claims.get("username"));
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        String username = String.valueOf(claims.get("username"));
 
-		return username;
+        return username;
 
-	}
+    }
 
-	public boolean validateJwtToken(String authToken) throws InvalidOperationException {
-		try {
-			SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
-			return true;
-		} catch (Exception e) {
-			log.info("Invalid token");
-			throw new InvalidOperationException("Invalid Token: "+e.getMessage());
-		}
-	}
+    public boolean validateJwtToken(String authToken) throws InvalidOperationException {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
+            return true;
+        } catch (Exception e) {
+            log.info("Invalid token");
+            throw new InvalidOperationException("Invalid Token: " + e.getMessage());
+        }
+    }
 }
