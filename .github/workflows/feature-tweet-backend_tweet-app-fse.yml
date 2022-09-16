@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'Tweet-app-fse'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6FE1342342C14373AEEBFC93A68F820C }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BCF2C8E7E7E4475393CF453DEACA6AC4 }}
           package: '*.jar'
