@@ -130,6 +130,7 @@ public class TweetService {
 
     public ResponseEntity<?> getAllTweets() {
         List<TweetRequest> tweets = tweetRepository.findAll();
+        log.info("Inside tweet Service");
         System.out.println(!tweets.isEmpty() + " " + tweets.size());
         if (!tweets.isEmpty() && tweets.size() > 0)
             return new ResponseEntity<Object>(formatData(tweets), HttpStatus.OK);
@@ -160,12 +161,9 @@ public class TweetService {
         return new ResponseEntity<Object>(new ResponseMessage("No Tweets Found"), HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<?> saveTweet(TweetRequest tweetRequest) {
-        String tweetId = UUID.randomUUID().toString();
-        tweetRequest.setTweetId(tweetId);
+    public TweetRequest saveTweet(TweetRequest tweetRequest) {
         tweetRequest.setStatus(true);
         tweetRequest.setTime(LocalDateTime.now());
-        tweetRepository.save(tweetRequest);
-        return new ResponseEntity("Added Tweet Successfully", HttpStatus.CREATED);
+        return tweetRepository.save(tweetRequest);
     }
 }

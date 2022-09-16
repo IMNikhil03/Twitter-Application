@@ -128,12 +128,12 @@ public class TestTweetController {
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 
 		String expectedOutput = "you cannot perform this action";
-		
+
 		// then
 		assertEquals(expectedOutput, contentAsString);
 
 	}
-	
+
 	@Test
 	void testUpdateTweet_ValidCase() throws Exception {
 
@@ -176,7 +176,7 @@ public class TestTweetController {
 				.andExpect(status().isOk());
 
 	}
-	
+
 	@Test
 	void testDeleteTweet_InvalidCase1() throws Exception {
 
@@ -187,7 +187,7 @@ public class TestTweetController {
 				.andExpect(status().is4xxClientError());
 
 	}
-	
+
 
 
 	@Test
@@ -240,7 +240,7 @@ public class TestTweetController {
 				.andExpect(status().isOk());
 
 	}
-	
+
 
 	@Test
 	void testGetAllTweetsOfUser() throws Exception {

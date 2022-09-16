@@ -2,7 +2,7 @@ package com.tweetapp.controller;
 
 import javax.validation.Valid;
 
-import com.tweetapp.producer.TweetProducer;
+import com.tweetapp.producer.Publisher;
 import com.tweetapp.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,8 @@ import com.tweetapp.service.TweetService;
 public class TweetController {
 
     @Autowired
-    TweetProducer tweetProducer;
+    Publisher tweetProducer;
 
-    @Autowired
-    TweetProducer tweetPublisher;
 
 
     @Autowired
@@ -33,12 +31,15 @@ public class TweetController {
     AuthenticationService authService;
 
     @PostMapping("/{loginId}/add")
-    public ResponseEntity<?> postNewTweet(@RequestHeader("Authorization") final String token, @PathVariable String loginId,
-                                          @RequestBody @Valid TweetRequest tweetRequest) throws Exception {
+    public ResponseEntity postNewTweet(@RequestHeader("Authorization") final String token, @PathVariable String loginId,
+                                       @RequestBody @Valid TweetRequest tweetRequest) throws Exception {
         log.info("inside tweet service controller to add a tweets");
         if (authService.validate(token).getBody().isValid()) {
+
+            log.info("Inside post tweet in controller");
             tweetRequest.setLoginId(loginId);
-            return tweetService.saveTweet(tweetRequest);
+            return tweetProducer.sendTweet(tweetRequest);
+//            return tweetService.saveTweet(tweetRequest);
 
         }
         throw new InvalidOperationException("you cannot perform this action!!");

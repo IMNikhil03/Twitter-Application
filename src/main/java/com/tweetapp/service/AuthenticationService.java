@@ -93,7 +93,7 @@ public class AuthenticationService {
         log.info("resetting the password");
         User user = findByLoginId.get(0);
         user.setPassword(passwordEncoder.encode(forgotPasswordRequest.getPassword()));
-//		 userRepository.deleteByLoginId(forgotPasswordRequest.getLoginId());
+		 userRepository.deleteByLoginId(forgotPasswordRequest.getLoginId());
         userRepository.save(user);
         return new ResponseEntity<>("Password reset successfull", HttpStatus.OK);
     }

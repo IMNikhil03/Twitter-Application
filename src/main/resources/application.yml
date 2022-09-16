@@ -29,5 +29,5 @@ Spring:
       on-profile: mongo-atlas
   data:
     mongodb:
-      uri: mongodb://localhost:27017
+      uri: mongodb+srv://user:user@cluster0.ulnh4p7.mongodb.net/
       database: tweet-app
