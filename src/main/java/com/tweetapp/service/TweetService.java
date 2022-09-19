@@ -60,7 +60,6 @@ public class TweetService {
         log.info("Validation is successfull for the Tweet: {}", tweet);
         tweet.setMessage(tweetRequest.getMessage());
         tweet.setTime(LocalDateTime.now());
-        tweetRepository.deleteByTweetId(tweetId);
         tweetRepository.save(tweet);
         log.info("successfull updated the Tweet: {}", tweet);
         return new ResponseEntity<Object>("Updated Tweet Successfully", HttpStatus.OK);

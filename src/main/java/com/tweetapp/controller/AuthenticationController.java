@@ -29,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1.0/tweets")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://tweetappfse2.azurewebsites.net/")
 @Slf4j
 public class AuthenticationController {
 

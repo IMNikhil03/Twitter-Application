@@ -13,7 +13,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query(value = "{}", fields = "{loginId : 1}")
     public List<String> findName();
 
-    @Query(value = "{'loginid' : $0}", delete = true)
+    @Query(value = "{'loginid' : ?0}", delete = true)
     public void deleteByLoginId(String id);
 
     public List<User> findByLoginId(String loginId);

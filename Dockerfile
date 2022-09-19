@@ -1,12 +1,7 @@
-FROM openjdk:8-jdk-slim
+FROM openjdk:11 as rabbitmq
 
-LABEL maintainer="yosuza143@gmail.com"
-LABEL author="Yogesh"
+ARG JAR_FILE=target/tweet-app-0.0.1-SNAPSHOT.jar 
 
-EXPOSE 8081
+COPY ${JAR_FILE} app.jar
 
-WORKDIR /usr/local/bin/
-
-COPY /target/tweet-app-0.0.1-SNAPSHOT.jar tweet-app.jar
-
-CMD ["java", "-Dspring.profiles.active=mongo-atlas","-jar","tweet-app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
