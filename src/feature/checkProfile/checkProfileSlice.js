@@ -10,7 +10,7 @@ async function deletePost(postIds) {
   console.log("in delete");
     const response = await axios({
       method: "delete",
-      url: "http://localhost:8080/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/delete/"+postIds,
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/delete/"+postIds,
       headers: {
         Authorization: "Bearer "+localStorage.getItem("token"),
       },
@@ -20,12 +20,12 @@ async function deletePost(postIds) {
 }
 
 export const getProfilePosts = createAsyncThunk(
-  "http://localhost:8080/api/v1.0/tweets/"+localStorage.getItem("loginId"),
+  "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+localStorage.getItem("loginId"),
   async (thunkAPI) => {
   //  alert(localStorage.getItem("loginId"));
     const response = await axios({
       method: "get",
-      url: "http://localhost:8080/api/v1.0/tweets/"+localStorage.getItem("loginId"),
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+localStorage.getItem("loginId"),
       headers: {
         Authorization: "Bearer "+localStorage.getItem("token"),
         "Content-Type": "application/json",

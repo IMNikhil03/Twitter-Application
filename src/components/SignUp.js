@@ -36,7 +36,7 @@ function SignUp() {
     const response = await axios({
       method: "post",
       mode: 'no-cors',
-      url: "http://localhost:8080/api/v1.0/tweets/register",
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/register",
       data: {
         firstName: inputData.firstName,
         lastName: inputData.lastName,

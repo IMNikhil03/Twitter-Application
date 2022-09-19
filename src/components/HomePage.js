@@ -25,33 +25,33 @@ import psnLogo from "./assets/psn-logo-large.png";
 function HomePage() {
   const navigate = useNavigate();
 
-  async function tokenValidate(){
-    const response = await axios({
-      method: "get",
-      url: "http://localhost:8080/apps/v1.0/tweets/validate",
-      headers: {
-        Authorization: "Bearer "+localStorage.getItem("token"),
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-    console.log(response);
-    if(response.status!==200){
-      localStorage.removeItem("token");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("valid");
-      localStorage.removeItem("firstName");
-      localStorage.removeItem("lastName");
-    }
-  }
+  // async function tokenValidate(){
+  //   const response = await axios({
+  //     method: "get",
+  //     url: "https://tweetappfse.azurewebsites.net/apps/v1.0/tweets/validate",
+  //     headers: {
+  //       Authorization: "Bearer "+localStorage.getItem("token"),
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //   });
+  //   console.log(response);
+  //   if(response.status!==200){
+  //     localStorage.removeItem("token");
+  //     localStorage.removeItem("userName");
+  //     localStorage.removeItem("valid");
+  //     localStorage.removeItem("firstName");
+  //     localStorage.removeItem("lastName");
+  //   }
+  // }
 
-  useEffect(() => {
-    if (localStorage.getItem("token") !== null) {
-      tokenValidate()
-      if(localStorage.getItem("token") !== null && localStorage.getItem("token")!=="" && localStorage.getItem("valid")!==true)
-        navigate("/home");
-    }
-  });
+  // useEffect(() => {
+  //   if (localStorage.getItem("token") !== null) {
+  //     tokenValidate()
+  //     if(localStorage.getItem("token") !== null && localStorage.getItem("token")!=="" && localStorage.getItem("valid")!==true)
+  //       navigate("/home");
+  //   }
+  // });
 
   return (
     <Container fluid>

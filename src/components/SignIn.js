@@ -30,7 +30,7 @@ function SignIn() {
     const response = await axios({
       method: "post",
       mode: 'no-cors',
-      url: "http://localhost:8080/api/v1.0/tweets/login",
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/login",
       data: {
         loginId: inputData.loginId,
         password: inputData.password

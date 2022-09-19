@@ -6,13 +6,13 @@ const initialState = {
 };
 
 export const getFollowingPosts = createAsyncThunk(
-  "http://localhost:8080/api/v1.0/tweets/all",
+  "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/all",
   async (thunkAPI) => {
    
     const response = await axios({
       method: "get",
       // mode: 'no-cors',
-      url: "http://localhost:8080/api/v1.0/tweets/all",
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/all",
       headers: {
         Authorization: "Bearer "+localStorage.getItem("token"),
         "Content-Type": "application/json",
@@ -29,7 +29,7 @@ async function insertComment(postId, commentContent) {
   console.log(commentContent);
   const response = await axios({
     method: "post",
-    url: "http://localhost:8080/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/reply/"+postId,
+    url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/reply/"+postId,
     headers: {
       Authorization: "Bearer "+localStorage.getItem("token"),
     },
@@ -40,7 +40,7 @@ async function updateLove(postId, currentUserId) {
     console.log(currentUserId);
     const response = await axios({
         method: "put",
-        url: "http://localhost:8080/api/v1.0/tweets/"+currentUserId+"/like/"+postId,
+        url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+currentUserId+"/like/"+postId,
         headers: {
          Authorization: "Bearer "+localStorage.getItem("token"),
         },
@@ -52,7 +52,7 @@ async function updateLove(postId, currentUserId) {
 async function updateUnLove(postId, currentUserId) {
   const response = await axios({
       method: "put",
-      url: "http://localhost:8080/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/unlike/"+postId,
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/"+localStorage.getItem("loginId")+"/unlike/"+postId,
       headers: {
        Authorization: "Bearer "+localStorage.getItem("token"),
       },

@@ -22,7 +22,7 @@ function TweetHome() {
     const response = await axios({
       method: "get",
       mode: 'no-cors',
-      url: "http://localhost:8080/api/v1.0/tweets/validate",
+      url: "https://tweetappfse.azurewebsites.net/api/v1.0/tweets/validate",
       headers: {
         Authorization: "Bearer "+localStorage.getItem("token"),
         "Content-Type": "application/json"
